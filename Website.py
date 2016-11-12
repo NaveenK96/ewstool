@@ -1,5 +1,5 @@
-from flask import Flask, request, render_template, url_for
-from models import *
+from flask import Flask, request, render_template, url_for, jsonify
+from Models import *
 import sqlite3
 
 app = Flask(__name__)
@@ -13,10 +13,13 @@ def inject_static():
                 title="the bourne interface")
 
 @app.route('/')
-def hello(name=None):
-	con = sqlite3.connect("Building.db")
-	cursor = con.cursor()
-    return render_template('index.html')
+def index():
+    con = sqlite3.connect("Building.db")
+    cursor = con.cursor()
+    cursor.execute("SELECT `BuildingName`, `Longitude`, `Latitude` FROM `Building` GROUP BY `BuildingName`")
+    data = cursor.fetchall()
+    print data
+    return render_template('index.html', data=jsonify(data))
 
 # @app.route('/<name>', methods=['GET', 'POST'])
 # def hello2(name=None):
