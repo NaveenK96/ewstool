@@ -1,4 +1,5 @@
 from flask import Flask, request, render_template, url_for
+from models import *
 import sqlite3
 
 app = Flask(__name__)
@@ -13,6 +14,8 @@ def inject_static():
 
 @app.route('/')
 def hello(name=None):
+	con = sqlite3.connect("Building.db")
+	cursor = con.cursor()
     return render_template('index.html')
 
 # @app.route('/<name>', methods=['GET', 'POST'])
