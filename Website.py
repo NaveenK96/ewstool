@@ -1,15 +1,19 @@
-from flask import Flask
-from flask import request
+from flask import Flask, request, render_template, url_for
 import sqlite3
-from flask import render_template
 
 app = Flask(__name__)
 
 assignments = {}
 
+@app.context_processor
+def inject_static():
+    return dict(css_url=url_for('static', filename='styles.css'),
+                js_url=url_for('static', filename='index.js'),
+                title="the bourne interface")
+
 @app.route('/')
 def hello(name=None):
-	return render_template('index.html')
+    return render_template('index.html')
 
 # @app.route('/<name>', methods=['GET', 'POST'])
 # def hello2(name=None):
@@ -24,4 +28,4 @@ def hello(name=None):
 # 	return render_template('files.html', name=assignments[name], comments=commentList)
 
 if __name__ == '__main__':
-	app.run()
+    app.run()
