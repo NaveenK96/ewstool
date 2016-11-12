@@ -17,10 +17,12 @@ def insert_data():
 	    day = datetime.now().day
 	    hour = datetime.now().hour
 	    for lab in data:
-	    	lab_name = ' '.join(lab['strlabname'].split(' ')[1:])
+	    	lab_name_split = lab['strlabname'].split(' ')
+	    	building_name = lab_name_split[0]
+	    	lab_name = ' '.join(lab_name_split[1:])
 	    	if lab_name == '':
 	    		lab_name = 'default'
-	    	cur.execute("INSERT INTO Labs (LabName, InUse, Total, Year, Month, Day, Hour) VALUES (?,?,?,?,?,?,?)", (lab_name, lab['inusecount'], lab['machinecount'], year, month, day, hour))
+	    	cur.execute("INSERT INTO Labs (BuildingName, LabName, InUse, Total, Year, Month, Day, Hour) VALUES (?,?,?,?,?,?,?,?)", (building_name, lab_name, lab['inusecount'], lab['machinecount'], year, month, day, hour))
 	    con.commit()
 
 def get_historical_data(lab_name):
@@ -48,5 +50,5 @@ def get_historical_data(lab_name):
 	return average
 	
 
-# insert_data()
-get_historical_data('4th Floor Center')
+insert_data()
+# get_historical_data('4th Floor Center')
