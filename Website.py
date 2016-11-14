@@ -78,12 +78,7 @@ def index():
         favorites[building].append(lab)
 
     if building and option == 'REMOVE':
-        lab = lab.split(":", 1)[0]
-        lab = lab.split(" ")
-        lab = lab[len(lab) - 1]
-        print favorites
-        print favorites[building]
-        print lab
+        lab = lab.split(":")[1].lstrip(" ")
         favorites[building].remove(lab)
         if not favorites[building]:
             del favorites[building]
@@ -107,7 +102,7 @@ def index():
             num = str(item[0])
             item = item[1]
             for thing in _favorites[item]:
-                html += """<div class=\"panel-body\"><a><div><div class=\"hidden\" style=\"display: none\">%s</div><div class=\"lab\">%s</div><span class=\"fa fa-star pull-right\" title=\"Unfavorite\"></span></div></a></div>""" % (str(_favorites[item][thing]['lat']) + ',' + str(_favorites[item][thing]['lng']) + "," + item + ",", item + " " + _favorites[item][thing]['lab'] + ": " + str(_favorites[item][thing]['inuse']) + " / " + str(_favorites[item][thing]['total']))
+                html += """<div class=\"panel-body\"><a><div><div class=\"hidden\" style=\"display: none\">%s</div><div class=\"lab\">%s</div><span class=\"fa fa-star pull-right\" title=\"Unfavorite\"></span></div></a></div>""" % (str(_favorites[item][thing]['lat']) + ',' + str(_favorites[item][thing]['lng']) + "," + item + ",", item + ": " + _favorites[item][thing]['lab'] + ": " + str(_favorites[item][thing]['inuse']) + " / " + str(_favorites[item][thing]['total']))
         html += """</div>"""
 
     for item in enumerate(labs):

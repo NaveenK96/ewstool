@@ -59,6 +59,7 @@ function initMap() {
                     $('#accordion').append(data.html);
                     $('.fa.fa-star-o').click(handlero);
                     $('.fa.fa-star').click(handler);
+                    $('.panel-body').click(handler_panel);
                 }
             }
         );
@@ -99,10 +100,6 @@ $(function () {
         $content.removeClass('col-md-12').addClass('col-md-9');
         }
     });
-    $('.panel-body').click(function () {
-        var coords = $(this).find("div").text().split(",");
-        map.setCenter({'lat':parseFloat(coords[0]), 'lng':parseFloat(coords[1])})
-    });
     $('#current-location').click(function () {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(function(position) {
@@ -137,6 +134,7 @@ function handlero() {
                 $('#accordion').append(data.html);
                 $('.fa.fa-star-o').click(handlero);
                 $('.fa.fa-star').click(handler);
+                $('.panel-body').click(handler_panel);
                 localStorage.setItem("favorites", JSON.stringify(data.favorites));
             }
         }
@@ -158,8 +156,14 @@ function handler() {
                 $('#accordion').append(data.html);
                 $('.fa.fa-star-o').click(handlero);
                 $('.fa.fa-star').click(handler);
+                $('.panel-body').click(handler_panel);
                 localStorage.setItem("favorites", JSON.stringify(data.favorites));
             }
         }
     );
+}
+
+function handler_panel() {
+    var coords = $(this).find("div").text().split(",");
+    map.setCenter({'lat':parseFloat(coords[0]), 'lng':parseFloat(coords[1])})
 }
