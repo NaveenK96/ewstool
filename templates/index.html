@@ -12,16 +12,16 @@
         <script src="https://use.fontawesome.com/28cc20b2fd.js"></script>
         <link rel="stylesheet" href="https://use.fontawesome.com/207a2af502.css">
 
-        <script type="text/javascript" src="../static/index.js"></script>
-        <script type="text/javascript">initData({{ data|tojson|safe }}, {{ otherdata|tojson|safe }})</script>
-        <link rel="stylesheet" type="text/css" href="../static/styles.css">
+        <script type="text/javascript" src="{{ js_url|safe }}"></script>
+        <script type="text/javascript">init({{ buildings|tojson|safe }}, {{ request.script_root|tojson|safe }});</script>
+        <link rel="stylesheet" type="text/css" href="{{ css_url|safe }}">
         <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAZblA87mmIXDi89Y-4P3xyB_Bu10CECwI&callback=initMap" async defer></script>
 
     </head>
     <body>
         <nav class="navbar navbar-default navbar-fixed-top">
-            <div class="container">
-                <button class="btn btn-primary" id="toggle-button" type="button">
+            <div class="container-fluid">
+                <button class="btn btn-primary" id="toggle-button" type="button" style="position:relative;top:7px">
                     <span class="fa fa-align-justify" title="EWS Labs"> EWS Labs</span>
                 </button>
             </div>
@@ -31,7 +31,45 @@
                 <div id="sidebar">
                     <button class="btn btn-primary" type="button" id="current-location" style="width: 100%">Current Location</button>
                     <p></p>
-                    <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                    <div class="panel-group" id="accordion" role="tablist">
+                        <div class="panel panel-info" style="display:none">
+                            <div class="panel-heading">
+                                <h1 class="panel-title">Favorites</h1>
+                            </div>
+                            {% for building in buildings %}
+                                {% for lab in buildings[building]['labs'] %}
+                                    <div class="panel-body" id="favorite-{{ lab }}" style="display:none">
+                                        <a>
+                                            <div>
+                                                <div>{{ building + " " + lab + ': ' + buildings[building]['labs'][lab]['inuse']|string + " / " + buildings[building]['labs'][lab]['total']|string + " in use" }}</div>
+                                                <span class="fa fa-star pull-right" title="Unfavorite"></span>
+                                            </div>
+                                        </a>
+                                    </div>
+                                {% endfor %}
+                            {% endfor %}
+                        </div>
+                        {% for building in buildings %}
+                            <div class="panel panel-default">
+                                <div class="panel-heading" role="tab" id="{{ building }}">
+                                    <h4 class="panel-title">
+                                        <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse{{ building }}">{{ buildings[building]['long_name'] }}</a>
+                                    </h4>
+                                </div>
+                                <div id="collapse{{ building }}" class="panel-collapse collapse out" role="tabpanel" >
+                                {% for lab in buildings[building]['labs'] %}
+                                    <div class="panel-body" id="{{ lab }}">
+                                        <a>
+                                            <div>
+                                                <div>{{ lab + ': ' + buildings[building]['labs'][lab]['inuse']|string + " / " + buildings[building]['labs'][lab]['total']|string + " in use" }}</div>
+                                                <span class="fa fa-star-o pull-right" title="Favorite"></span>
+                                            </div>
+                                        </a>
+                                    </div>
+                                {% endfor %}
+                                </div>
+                            </div>
+                        {% endfor %}
                     </div>
                 </div>
             </div>

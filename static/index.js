@@ -1,13 +1,12 @@
-var data = [];
-var otherdata = [];
+var map;
+var url;
+var buildings;
 
-function initData(input, input2) {
-    data = input;
-    otherdata = input2;
-    console.log(otherdata);
+function init(data, input) {
+    buildings = data;
+    url = input;
 }
 
-var map;
 function initMap() {
     map = new google.maps.Map(document.getElementById('map'), {
         center: {lat: 40.111674, lng: -88.227017},
@@ -17,26 +16,46 @@ function initMap() {
         disableDoubleClickZoom: true,
         scrollwheel: false
     });
-    data.map(function(item) {
-        var fillColor = "00FF00"
-        var pinImage = new google.maps.MarkerImage("https://chart.apis.google.com/chart?chst=d_map_spin&chld=.8|0|" + fillColor + "|9|_|" + item.name);
+    Object.keys(buildings).map(function(building) {
+        var fillColors = ["00FF00", "33FF00", "66FF00", "99FF00", "CCFF00", "FFFF00", "FFCC00", "FF9900", "FF6600", "FF3300", "FF0000"];
+        var index = Math.ceil(((buildings[building].inuse / buildings[building].total) * fillColors.length) - 1);
+        index = index == -1 ? 0 : index;
+        var fillColor = fillColors[index];
+        var pinImage = new google.maps.MarkerImage("https://chart.apis.google.com/chart?chst=d_map_spin&chld=.8|0|" + fillColor + "|9|_|" + building);
         var marker = new google.maps.Marker({
-            position: {lat: item.lat, lng: item.lng},
+            position: {lat: buildings[building].latitude, lng: buildings[building].longitude},
             map: map,
-            title: item.name,
-            icon:pinImage
+            title: buildings[building].long_name,
+            icon: pinImage
         });
-        var contentString = '<h1>Labs</h1>';
+        var contentString = '<div class="text-center"><h4>' + buildings[building].long_name + '<br><small>' + buildings[building].address +  '</small></h4><p></p>' + buildings[building].hours + '<h5>In use: <small>' + buildings[building].inuse.toString() + ' / ' + buildings[building].total.toString() + '</small></h5></div>';
         var infowindow = new google.maps.InfoWindow({
-          content: contentString
+            content: contentString
         });
         marker.addListener('mouseover', function() {
-          infowindow.open(map, marker);
+            infowindow.open(map, marker);
         });
         marker.addListener('mouseout', function() {
-          infowindow.close(map, marker);
+            infowindow.close(map, marker);
+        });
+        marker.addListener('click', function() {
+            window.location.replace(url + "/" + building);
         });
     });
+    var controlDiv = document.createElement('div');
+    var controlUI = document.createElement('div');
+    controlUI.style.boxShadow = 'rgba(0, 0, 0, 0.298039) 0px 1px 4px -1px';
+    controlUI.style.backgroundColor = '#fff';
+    controlUI.style.marginBottom = '32px';
+    controlUI.style.textAlign = 'center';
+    controlDiv.appendChild(controlUI);
+    var controlText = document.createElement('div');
+    controlText.style.fontFamily = '"Times New Roman", Times, serif';
+    controlText.style.fontSize = '16px';
+    controlText.style.padding = '8px';
+    controlText.textContent = 'Green: Empty -> Red: Full';
+    controlUI.appendChild(controlText);
+    map.controls[google.maps.ControlPosition.BOTTOM_CENTER].push(controlDiv);
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(function(position) {
         var pos = {
@@ -53,24 +72,13 @@ function initMap() {
         // handleLocationError(false, infoWindow, map.getCenter());
         // alert("Geolocation not supported.");
     }
-    if (typeof(Storage) !== "undefined") {
-        var favorites = localStorage.getItem("favorites");
-        $.post("/", {
-                favorites: favorites
-            },
-            function (data, status) {
-                if (status == 'success') {
-                    $('#accordion').append(data.html);
-                    $('.fa.fa-star-o').click(handlero);
-                    $('.fa.fa-star').click(handler);
-                    $('.panel-body').click(handler_panel);
-                }
-            }
-        );
-    }
 }
 
 $(function () {
+    $('.fa.fa-star-o').click(handler_favorite);
+    $('.fa.fa-star').click(handler_unfavorite);
+    $('.panel-body').click(handler_panel);
+
     var $menu = $('#sidebar-wrapper');
     var $content = $('#main-wrapper');
     $content.addClass('no-transition');
@@ -113,61 +121,72 @@ $(function () {
             };
             map.setCenter(pos);
             }, function() {
-                map.setCenter({lat: 40.111674, lng: -88.227017});
-                // alert("Geolocation not supported.");
+                alert("Geolocation not supported.");
             });
         } else {
-            map.setCenter({lat: 40.111674, lng: -88.227017});
-            // alert("Geolocation not supported.");
+            alert("Geolocation not supported.");
         }
     });
+    if (typeof(Storage) !== "undefined") {
+        var favorites = JSON.parse(localStorage.getItem("favorites"));
+        if (favorites != null) {
+            if (favorites.length != 0) {
+                $(".panel.panel-info").show()
+            }
+            for (var i = 0; i < favorites.length; i++) {
+                var name = "#favorite-" + favorites[i];
+                $(name).show();
+                name = "#" + favorites[i];
+                $(name).hide();
+            }
+        }
+    }
 });
-
-function handlero() {
-    var data = $(this).parent().children($('.hidden')).text().split(",");
-    var favorites = localStorage.getItem("favorites");
-    $.post("/", {
-            favorites: favorites,
-            building: data[2],
-            lab: data[3],
-            option: "ADD"
-        },
-        function (data, status) {
-            if (status == 'success') {
-                $('#accordion').empty();
-                $('#accordion').append(data.html);
-                $('.fa.fa-star-o').click(handlero);
-                $('.fa.fa-star').click(handler);
-                $('.panel-body').click(handler_panel);
-                localStorage.setItem("favorites", JSON.stringify(data.favorites));
-            }
-        }
-    );
+function handler_favorite() {
+    if (typeof(Storage) !== "undefined") {
+        $(".panel.panel-info").show()
+        var id = $(this).parent().parent().parent().attr('id');
+        var favorites = JSON.parse(localStorage.getItem("favorites"));
+        favorites.push(id);
+        localStorage.setItem("favorites", JSON.stringify(favorites));
+        var name = "#favorite-" + id;
+        $(name).show();
+        name = "#" + id;
+        $(name).hide();
+    }
 }
-
-function handler() {
-    var data = $(this).parent().children($('.hidden')).text().split(",");
-    var favorites = localStorage.getItem("favorites");
-    $.post("/", {
-            favorites: favorites,
-            building: data[2],
-            lab: data[3],
-            option: "REMOVE"
-        },
-        function (data, status) {
-            if (status == 'success') {
-                $('#accordion').empty();
-                $('#accordion').append(data.html);
-                $('.fa.fa-star-o').click(handlero);
-                $('.fa.fa-star').click(handler);
-                $('.panel-body').click(handler_panel);
-                localStorage.setItem("favorites", JSON.stringify(data.favorites));
-            }
+function handler_unfavorite() {
+    if (typeof(Storage) !== "undefined") {
+        var id = $(this).parent().parent().parent().attr('id').split('-')[1];
+        var favorites = JSON.parse(localStorage.getItem("favorites"));
+        var index = favorites.indexOf(id);
+        if (index > -1) {
+            favorites.splice(index, 1);
         }
-    );
+        localStorage.setItem("favorites", JSON.stringify(favorites));
+        if (favorites.length == 0) {
+            $(".panel.panel-info").hide()
+        }
+        var name = "#favorite-" + id;
+        $(name).hide();
+        name = "#" + id;
+        $(name).show();
+    }
 }
 
 function handler_panel() {
-    var coords = $(this).find("div").text().split(",");
-    map.setCenter({'lat':parseFloat(coords[0]), 'lng':parseFloat(coords[1])})
+    var id = $(this).attr('id').split("-");
+    if (id.length == 2) {
+        id = id[1];
+    } else {
+        id = id[0].replace('#', '');
+    }
+    var pos;
+    var keys = Object.keys(buildings);
+    for (var i = 0; i < keys.length; i++) {
+        if (id in buildings[keys[i]].labs) {
+            pos = {'lat': buildings[keys[i]].latitude, 'lng': buildings[keys[i]].longitude};
+        }
+    }
+    map.setCenter(pos)
 }
