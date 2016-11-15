@@ -7,10 +7,14 @@
 		<ul>
 		{% for key in result %}
 			<br>
-			<div style="width:880px; height:480px; margin: auto; text-align:center">
+			<div style="width:880px; height:480px; margin: auto; text-align:center; margin-bottom: 100px">
 				<br>
 				<h3>Details for {{ key }}</h3>
-				{{ result[key]|safe }}
+				{% for detail in result[key][1] %}
+					{{ detail }}
+					<br>
+				{% endfor %}
+				{{ result[key][0]|safe }}
 				<br>
 			</div>
 			<br><br><br>

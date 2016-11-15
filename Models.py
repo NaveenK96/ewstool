@@ -5,6 +5,13 @@ from datetime import datetime, timedelta
 
 database = "Building.db"
 
+def get_lab_details(lab_name):
+	with sql.connect(database) as con:
+		cur = con.cursor()
+		result = cur.execute("SELECT Lab_Details FROM Building WHERE LabName = (?);", (lab_name,))
+		con.commit()
+		return result.fetchall()
+
 def get_labs_from_building(building_name):
 	with sql.connect(database) as con:
 		cur = con.cursor()
