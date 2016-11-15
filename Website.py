@@ -43,12 +43,15 @@ def index():
     cursor = con.cursor()
 
     if request.method == 'GET':
+        response = urllib2.urlopen('https://my.engr.illinois.edu/labtrack/util_data_json.asp')
+    	otherdata = response.read()
+    	otherdata = json.loads(otherdata)['data']
         cursor.execute("SELECT `BuildingName`, `Latitude`, `Longitude` FROM `Building` GROUP BY `BuildingName`")
         buildings = list()
         for item in cursor.fetchall():
             buildings.append({'name':item[0], 'lat':item[1], 'lng':item[2]})
 
-        return render_template('index.html', data=buildings)
+        return render_template('index.html', data=buildings, otherdata=otherdata)
 
     _labs = dict()
     cursor.execute("SELECT `LongName`, Labs.LabName, `InUse`, `Total`, `Latitude`, `Longitude` FROM `Labs` INNER JOIN `Building` ON Labs.LabName = Building.LabName ORDER BY Labs.ID DESC LIMIT 26")

@@ -13,7 +13,7 @@
         <link rel="stylesheet" href="https://use.fontawesome.com/207a2af502.css">
 
         <script type="text/javascript" src="../static/index.js"></script>
-        <script type="text/javascript">initData({{ data|tojson|safe }})</script>
+        <script type="text/javascript">initData({{ data|tojson|safe }}, {{ otherdata|tojson|safe }})</script>
         <link rel="stylesheet" type="text/css" href="../static/styles.css">
         <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAZblA87mmIXDi89Y-4P3xyB_Bu10CECwI&callback=initMap" async defer></script>
 
