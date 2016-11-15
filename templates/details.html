@@ -2,16 +2,20 @@
 <html>
 	<head>
 		<h1 style="margin: auto; text-align: center">Detailed Information for {{ building_name }}</h1>
+		<h3 style="margin: auto; text-align: center; font-style: italic;">{{ building_address[0][0] }}</h3>
 	</head>
 	<body>
 		<ul>
 		{% for key in result %}
 			<br>
+			<br>
 			<div style="width:880px; height:480px; margin: auto; text-align:center; margin-bottom: 100px">
 				<br>
-				<h3>Details for {{ key }}</h3>
+				<h2 style="margin: auto; text-align: center;">{{ key }}</h2>
+				<br>
 				{% for detail in result[key][1] %}
 					{{ detail }}
+
 					<br>
 				{% endfor %}
 				{{ result[key][0]|safe }}

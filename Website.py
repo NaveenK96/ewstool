@@ -21,6 +21,7 @@ def prediction(name=None):
     building_name = "DCL"
     labs = get_labs_from_building(building_name)
     charts = {}
+    building_address = get_building_address(building_name)
     for lab in labs:
         lab = str(lab[0])
         lab_details = get_lab_details(lab)
@@ -43,7 +44,7 @@ def prediction(name=None):
         bar_chart.x_labels = xlabels
         charts[lab] = (str(bar_chart.render()).decode('utf-8'), lab_details[0][0].split('|'))
     # return Response(response=bar_chart.render(), content_type='image/svg+xml')
-    return render_template('details.html', result=charts, building_name=building_name)
+    return render_template('details.html', result=charts, building_name=building_name, building_address=building_address)
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
