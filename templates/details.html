@@ -6,9 +6,14 @@
 	<body>
 		<ul>
 		{% for key in result %}
-			<div style="width:880px; height:480px; margin: auto;">
+			<br>
+			<div style="width:880px; height:480px; margin: auto; text-align:center">
+				<br>
+				<h3>Details for {{ key }}</h3>
 				{{ result[key]|safe }}
+				<br>
 			</div>
+			<br><br><br>
 		{% endfor %}
 		</ul>
 	</body>
