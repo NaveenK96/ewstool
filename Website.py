@@ -11,12 +11,14 @@ app = Flask(__name__)
 
 @app.context_processor
 def inject_static():
-    return dict(css_url=url_for('static', filename='styles.css'),
-                js_url=url_for('static', filename='index.js'),
+    css_urls = [url_for('static', filename='font-awesome-4.7.0/css/font-awesome.min.css'), url_for('static', filename='bootstrap.min.css')]
+    js_urls = [url_for('static', filename='jquery-3.1.1.min.js'), url_for('static', filename='tether.min.js'), url_for('static', filename='bootstrap.min.js')]
+    return dict(css_urls=css_urls,
+                js_urls=js_urls,
                 title="the bourne interface")
 
 @app.route('/<name>', methods=['GET'])
-def prediction(name=None):
+def prediction(name = None):
     print name
     building_name = "DCL"
     labs = get_labs_from_building(building_name)
@@ -44,13 +46,23 @@ def prediction(name=None):
         bar_chart.x_labels = xlabels
         charts[lab] = (str(bar_chart.render()).decode('utf-8'), lab_details[0][0].split('|'))
     # return Response(response=bar_chart.render(), content_type='image/svg+xml')
-    return render_template('details.html', result=charts, building_name=building_name, building_address=building_address)
+    return render_template('details.html',
+                            result=charts,
+                            building_name=building_name,
+                            building_address=building_address,
+                            title=name + " - the bourne interface")
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
+    css_urls = [url_for('static', filename='font-awesome-4.7.0/css/font-awesome.min.css'), url_for('static', filename='bootstrap.min.css'), url_for('static', filename='index.css')]
+    js_urls = [url_for('static', filename='jquery-3.1.1.min.js'), url_for('static', filename='tether.min.js'), url_for('static', filename='bootstrap.min.js'), url_for('static', filename='index.js')]
+
     buildings = getBuildingData()
 
-    return render_template('index.html', buildings=buildings)
+    return render_template('index.html',
+                            buildings=buildings,
+                            css_urls=css_urls,
+                            js_urls=js_urls)
 
 def getBuildingData():
     _buildings = loads(urlopen('https://my.engr.illinois.edu/labtrack/util_data_json.asp').read())['data']

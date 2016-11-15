@@ -1,28 +1,39 @@
-<!doctype html>
-<html>
-	<head>
-		<h1 style="margin: auto; text-align: center">Detailed Information for {{ building_name }}</h1>
-		<h3 style="margin: auto; text-align: center; font-style: italic;">{{ building_address[0][0] }}</h3>
-	</head>
-	<body>
-		<ul>
-		{% for key in result %}
-			<br>
-			<br>
-			<div style="width:880px; height:480px; margin: auto; text-align:center; margin-bottom: 100px">
-				<br>
-				<h2 style="margin: auto; text-align: center;">{{ key }}</h2>
-				<br>
-				{% for detail in result[key][1] %}
-					{{ detail }}
+<!DOCTYPE html>
+<html lang="en-US">
+    <head>
+        <title>{{ title|safe }}</title>
+        <meta name="viewport" content="initial-scale=1.0">
+        <meta charset="utf-8">
 
-					<br>
-				{% endfor %}
-				{{ result[key][0]|safe }}
-				<br>
-			</div>
-			<br><br><br>
-		{% endfor %}
-		</ul>
-	</body>
+        {% for url in js_urls %}
+            <script src="{{ url|safe }}"></script>
+        {% endfor %}
+        {% for url in css_urls %}
+            <link rel="stylesheet" type="text/css" href="{{ url|safe }}">
+        {% endfor %}
+    </head>
+    <body>
+        <h1 style="margin: auto; text-align: center">Detailed Information for {{ building_name }}</h1>
+        <h3 style="margin: auto; text-align: center; font-style: italic;">{{ building_address[0][0] }}</h3>
+
+        <ul>
+        {% for key in result %}
+            <br>
+            <br>
+            <div style="width:880px; height:480px; margin: auto; text-align:center; margin-bottom: 100px">
+                <br>
+                <h2 style="margin: auto; text-align: center;">{{ key }}</h2>
+                <br>
+                {% for detail in result[key][1] %}
+                    {{ detail }}
+
+                    <br>
+                {% endfor %}
+                {{ result[key][0]|safe }}
+                <br>
+            </div>
+            <br><br><br>
+        {% endfor %}
+        </ul>
+    </body>
 </html>
