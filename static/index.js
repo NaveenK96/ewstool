@@ -1,6 +1,10 @@
 var data = [];
-function initData(input) {
+var otherdata = [];
+
+function initData(input, input2) {
     data = input;
+    otherdata = input2;
+    console.log(otherdata);
 }
 
 var map;
@@ -22,7 +26,7 @@ function initMap() {
             title: item.name,
             icon:pinImage
         });
-        var contentString = 'Hello';
+        var contentString = '<h1>Labs</h1>';
         var infowindow = new google.maps.InfoWindow({
           content: contentString
         });
