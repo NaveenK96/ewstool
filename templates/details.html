@@ -1,0 +1,15 @@
+<!doctype html>
+<html>
+	<head>
+		<h1 style="margin: auto; text-align: center">Detailed Information for {{ building_name }}</h1>
+	</head>
+	<body>
+		<ul>
+		{% for key in result %}
+			<div style="width:880px; height:480px; margin: auto;">
+				{{ result[key]|safe }}
+			</div>
+		{% endfor %}
+		</ul>
+	</body>
+</html>

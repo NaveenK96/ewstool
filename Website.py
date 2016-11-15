@@ -15,27 +15,35 @@ def inject_static():
                 js_url=url_for('static', filename='index.js'),
                 title="the bourne interface")
 
-@app.route('/<name>', methods=['GET', 'POST'])
+@app.route('/<name>', methods=['GET'])
 def prediction(name=None):
-    data = get_historical_data("L416")
-    bar_chart = pygal.Bar(width=1100, height=600, range=(0, 70))
-    bar_chart.title = "Next 24 hour prediction"
-    bar_chart.add('Usage', data)
-    xlabels = []
+    print name
+    building_name = "DCL"
+    labs = get_labs_from_building(building_name)
+    charts = {}
+    for lab in labs:
+        lab = str(lab[0])
+        
+        data = get_historical_data(lab)
+        bar_chart = pygal.Bar(width=1100, height=600, range=(0, 70))
+        bar_chart.title = "Next 24 hour prediction for " + lab
+        bar_chart.add('Usage', data)
+        xlabels = []
 
-    for i in range(datetime.now().hour, datetime.now().hour+24):
-        suffix = ''
-        if i%24 < 12:
-            suffix = ' AM'
-        else:
-            suffix = ' PM'
-        if i%12 == 0:
-            xlabels.append('12' + suffix)
-        else:
-            xlabels.append(str(i%12) + suffix)
-    bar_chart.x_labels = xlabels
-    print(bar_chart.render())
-    return Response(response=bar_chart.render(), content_type='image/svg+xml')
+        for i in range(datetime.now().hour, datetime.now().hour+24):
+            suffix = ''
+            if i%24 < 12:
+                suffix = ' AM'
+            else:
+                suffix = ' PM'
+            if i%12 == 0:
+                xlabels.append('12' + suffix)
+            else:
+                xlabels.append(str(i%12) + suffix)
+        bar_chart.x_labels = xlabels
+        charts[lab] = str(bar_chart.render()).decode('utf-8')
+    # return Response(response=bar_chart.render(), content_type='image/svg+xml')
+    return render_template('details.html', result=charts, building_name=building_name)
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
