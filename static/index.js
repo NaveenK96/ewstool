@@ -77,7 +77,7 @@ function initMap() {
 $(function () {
     $('.fa.fa-star-o').click(handler_favorite);
     $('.fa.fa-star').click(handler_unfavorite);
-    $('.panel-body').click(handler_panel);
+    $('._panel').click(handler_panel);
 
     var $menu = $('#sidebar-wrapper');
     var $content = $('#main-wrapper');
@@ -175,7 +175,7 @@ function handler_unfavorite() {
 }
 
 function handler_panel() {
-    var id = $(this).attr('id').split("-");
+    var id = $(this).parent().parent().parent().attr('id').split("-");
     if (id.length == 2) {
         id = id[1];
     } else {

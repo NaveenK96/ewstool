@@ -18,9 +18,13 @@
     <body>
         <nav class="navbar navbar-default navbar-fixed-top">
             <div class="container-fluid">
-                <button class="btn btn-primary" id="toggle-button" type="button" style="position:relative;top:7px">
-                    <span class="fa fa-align-justify" title="EWS Labs"> EWS Labs</span>
-                </button>
+                <div class="collapse navbar-collapse" id="collapse-1">
+                    <ul class="nav navbar-nav navbar-left">
+                        <button class="btn btn-primary" id="toggle-button" type="button" style="position:relative;top:8px">
+                            <span class="fa fa-align-justify" title="EWS Labs" aria-hidden="true"> EWS Labs</span>
+                        </button>
+                    </ul>
+                </div>
             </div>
         </nav>
         <div id="wrapper">
@@ -38,7 +42,7 @@
                                     <div class="panel-body" id="favorite-{{ lab }}" style="display:none">
                                         <a>
                                             <div>
-                                                <div>{{ building + " " + lab + ': ' + buildings[building]['labs'][lab]['inuse']|string + " / " + buildings[building]['labs'][lab]['total']|string + " in use" }}</div>
+                                                <div class="_panel">{{ building + " " + lab + ': ' + buildings[building]['labs'][lab]['inuse']|string + " / " + buildings[building]['labs'][lab]['total']|string + " in use" }}</div>
                                                 <span class="fa fa-star pull-right" title="Unfavorite"></span>
                                             </div>
                                         </a>
@@ -58,7 +62,7 @@
                                     <div class="panel-body" id="{{ lab }}">
                                         <a>
                                             <div>
-                                                <div>{{ lab + ': ' + buildings[building]['labs'][lab]['inuse']|string + " / " + buildings[building]['labs'][lab]['total']|string + " in use" }}</div>
+                                                <div class="_panel">{{ lab + ': ' + buildings[building]['labs'][lab]['inuse']|string + " / " + buildings[building]['labs'][lab]['total']|string + " in use" }}</div>
                                                 <span class="fa fa-star-o pull-right" title="Favorite"></span>
                                             </div>
                                         </a>

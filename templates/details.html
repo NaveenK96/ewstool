@@ -11,29 +11,55 @@
         {% for url in css_urls %}
             <link rel="stylesheet" type="text/css" href="{{ url|safe }}">
         {% endfor %}
+
+        <script>init({{ buildings|tojson|safe }});</script>
     </head>
     <body>
-        <h1 style="margin: auto; text-align: center">Detailed Information for {{ building_name }}</h1>
-        <h3 style="margin: auto; text-align: center; font-style: italic;">{{ building_address[0][0] }}</h3>
-
-        <ul>
-        {% for key in result %}
-            <br>
-            <br>
-            <div style="width:880px; height:480px; margin: auto; text-align:center; margin-bottom: 100px">
-                <br>
-                <h2 style="margin: auto; text-align: center;">{{ key }}</h2>
-                <br>
-                {% for detail in result[key][1] %}
-                    {{ detail }}
-
-                    <br>
-                {% endfor %}
-                {{ result[key][0]|safe }}
-                <br>
+        <nav class="navbar navbar-default navbar-fixed-top">
+            <div class="container-fluid">
+                <div class="collapse navbar-collapse" id="collapse-2">
+                    <ul class="nav navbar-nav navbar-left">
+                        <a href="/">
+                            <button class="btn btn-primary" type="button" style="position:relative;top:8px">
+                                <span class="fa fa-home" title="Home" aria-hidden="true"> Home</span>
+                            </button>
+                        </a>
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                        {% for lab in buildings[name]['labs'] %}
+                            {% if loop.index == 1%}
+                            <li class="active" id="button-{{ lab }}"><a>{{ lab }}</a></li>
+                            {% else %}
+                            <li class="off" id="button-{{ lab }}"><a>{{ lab }}</a></li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                </div>
             </div>
-            <br><br><br>
-        {% endfor %}
-        </ul>
+        </nav>
+        <div id="wrapper" style="text-align:center">
+            <div class="page-header">
+                <h1>{{ name }}<br><small>{{ buildings[name]['address'] }}</small></h1>
+            </div>
+            {% for lab in buildings[name]['labs']%}
+                {% if loop.index == 1 %}
+                    <div id="detail-{{ lab }}">
+                {% else %}
+                    <div id="detail-{{ lab }}" style="display:none">
+                {% endif %}
+                <div class="jumbotron" style="height:100%">
+                    <h3>{{ lab }}</h3>
+                    <h4>In use
+                    <br><small>{{ buildings[name]['labs'][lab]['inuse']|string + ' / ' + buildings[name]['labs'][lab]['total']|string }}</small></h4>
+                    <h4>Details
+                        {% for detail in buildings[name]['labs'][lab]['details'] %}
+                        <br><small>{{ detail }}</small>
+                        {% endfor %}
+                    </h4>
+                    <div style="width:880px; height:480px; margin: auto; text-align:center; margin-bottom: 100px">{{ buildings[name]['labs'][lab]['visual']|safe }}</div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
     </body>
 </html>

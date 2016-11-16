@@ -19,11 +19,13 @@ def inject_static():
 
 @app.route('/<name>', methods=['GET'])
 def prediction(name = None):
-    print name
-    building_name = "DCL"
-    labs = get_labs_from_building(building_name)
-    charts = {}
-    building_address = get_building_address(building_name)
+    css_urls = [url_for('static', filename='font-awesome-4.7.0/css/font-awesome.min.css'), url_for('static', filename='bootstrap.min.css'), url_for('static', filename='details.css')]
+    js_urls = [url_for('static', filename='jquery-3.1.1.min.js'), url_for('static', filename='tether.min.js'), url_for('static', filename='bootstrap.min.js'), url_for('static', filename='details.js')]
+
+    buildings = getData()
+
+    labs = get_labs_from_building(name)
+    # charts = dict()
     for lab in labs:
         lab = str(lab[0])
         lab_details = get_lab_details(lab)
@@ -44,27 +46,28 @@ def prediction(name = None):
             else:
                 xlabels.append(str(i%12) + suffix)
         bar_chart.x_labels = xlabels
-        charts[lab] = (str(bar_chart.render()).decode('utf-8'), lab_details[0][0].split('|'))
+        # charts[lab] = (str(bar_chart.render()).decode('utf-8'), lab_details[0][0].split('|'))
+        buildings[name]['labs'][lab]['visual'] = str(bar_chart.render()).decode('utf-8')
     # return Response(response=bar_chart.render(), content_type='image/svg+xml')
     return render_template('details.html',
-                            result=charts,
-                            building_name=building_name,
-                            building_address=building_address,
-                            title=name + " - the bourne interface")
+                            # result=charts,
+                            title=name,
+                            name=name,
+                            buildings=buildings,
+                            css_urls=css_urls,
+                            js_urls=js_urls)
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
     css_urls = [url_for('static', filename='font-awesome-4.7.0/css/font-awesome.min.css'), url_for('static', filename='bootstrap.min.css'), url_for('static', filename='index.css')]
     js_urls = [url_for('static', filename='jquery-3.1.1.min.js'), url_for('static', filename='tether.min.js'), url_for('static', filename='bootstrap.min.js'), url_for('static', filename='index.js')]
 
-    buildings = getBuildingData()
-
     return render_template('index.html',
-                            buildings=buildings,
+                            buildings=getData(),
                             css_urls=css_urls,
                             js_urls=js_urls)
 
-def getBuildingData():
+def getData():
     _buildings = loads(urlopen('https://my.engr.illinois.edu/labtrack/util_data_json.asp').read())['data']
     buildings = OrderedDict()
     for lab in _buildings:
@@ -84,10 +87,16 @@ def getBuildingData():
             buildings[building]['inuse'] = 0
         if 'total' not in buildings[building]:
             buildings[building]['total'] = 0
-        buildings[building]['labs'][lab_name]['inuse'] = lab['inusecount']
         buildings[building]['inuse'] += lab['inusecount']
-        buildings[building]['labs'][lab_name]['total'] = lab['machinecount']
         buildings[building]['total'] += lab['machinecount']
+        buildings[building]['labs'][lab_name]['total'] = lab['machinecount']
+        buildings[building]['labs'][lab_name]['inuse'] = lab['inusecount']
+        with connect("Building.db") as con:
+            cursor = con.cursor()
+            cursor.execute("""SELECT `Lab_Details` FROM `Building` WHERE `LabName` = \"%s\"""" % (lab_name))
+            data = cursor.fetchone()
+            if data:
+                buildings[building]['labs'][lab_name]['details'] = str(data[0]).split("|")
 
     with connect("Building.db") as con:
         cursor = con.cursor()
