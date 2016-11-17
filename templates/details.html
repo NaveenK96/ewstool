@@ -37,9 +37,9 @@
                 </div>
             </div>
         </nav>
-        <div id="wrapper" style="text-align:center">
+        <div class="container" id="wrapper" style="text-align:center;margin:auto">
             <div class="page-header">
-                <h1>{{ name }}<br><small>{{ buildings[name]['address'] }}</small></h1>
+                <h1>{{ buildings[name]['long_name'] }}<br><small>{{ buildings[name]['address'] }}</small></h1>
             </div>
             {% for lab in buildings[name]['labs']%}
                 {% if loop.index == 1 %}
@@ -47,18 +47,22 @@
                 {% else %}
                     <div id="detail-{{ lab }}" style="display:none">
                 {% endif %}
-                <div class="jumbotron" style="height:100%">
-                    <h3>{{ lab }}</h3>
-                    <h4>In use</h4>
-                    <div class="progress" style="width:880px;margin:auto;">
-                        <div class="progress-bar" role="progressbar" style="width: {{ (buildings[name]['labs'][lab]['inuse'] / buildings[name]['labs'][lab]['total']) * 100 }}%;background-color:{{ buildings[name]['labs'][lab]['color'] }};color:#000000">{{ buildings[name]['labs'][lab]['inuse']|string + ' / ' + buildings[name]['labs'][lab]['total']|string }}</div>
+                <div class="jumbotron row" style="margin-top:100px">
+                    <div class="col-md-6">
+                        <h2>Room Number: {{ lab }}</h2>
+                        <div class="progress" style="width:65%;margin:auto">
+                            <div class="progress-bar" role="progressbar" style="width: {{ (buildings[name]['labs'][lab]['inuse'] / buildings[name]['labs'][lab]['total']) * 100 }}%;background-color:{{ buildings[name]['labs'][lab]['color'] }};color:#000000">{{ buildings[name]['labs'][lab]['inuse']|string + ' / ' + buildings[name]['labs'][lab]['total']|string }}</div>
+                        </div>
+                        <br>
+                        <h4>Details
+                            {% for detail in buildings[name]['labs'][lab]['details'] %}
+                            <br><small>{{ detail }}</small>
+                            {% endfor %}
+                        </h4>
                     </div>
-                    <h4>Details
-                        {% for detail in buildings[name]['labs'][lab]['details'] %}
-                        <br><small>{{ detail }}</small>
-                        {% endfor %}
-                    </h4>
-                    <div style="width:880px; height:480px; margin: auto; text-align:center; margin-bottom: 100px">{{ buildings[name]['labs'][lab]['visual']|safe }}</div>
+                    <div class="col-md-6">
+                        <div style="width:80%;margin:auto;text-align:center;display:block;margin-bottom:0px;">{{ buildings[name]['labs'][lab]['visual']|safe }}</div>
+                    </div>
                 </div>
             </div>
             {% endfor %}
