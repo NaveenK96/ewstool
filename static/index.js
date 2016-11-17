@@ -147,6 +147,9 @@ function handler_favorite() {
         $(".panel.panel-info").show()
         var id = $(this).parent().parent().parent().attr('id');
         var favorites = JSON.parse(localStorage.getItem("favorites"));
+        if (favorites == null) {
+            favorites = [];
+        }
         favorites.push(id);
         localStorage.setItem("favorites", JSON.stringify(favorites));
         var name = "#favorite-" + id;
