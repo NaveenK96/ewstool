@@ -60,7 +60,7 @@ def prediction(name = None):
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    css_urls = [url_for('static', filename='font-awesome-4.7.0/css/font-awesome.min.css'), url_for('static', filename='bootstrap.min.css'), url_for('static', filename='index.css')]
+    css_urls = [url_for('static', filename='font-awesome-4.7.0/css/font-awesome.min.css'), url_for('static', filename='bootstrap.min.css'),  url_for('static', filename='index.css')]
     js_urls = [url_for('static', filename='jquery-3.1.1.min.js'), url_for('static', filename='tether.min.js'), url_for('static', filename='bootstrap.min.js'), url_for('static', filename='index.js')]
 
     return render_template('index.html',
@@ -114,7 +114,7 @@ def getData():
 
     for building in buildings:
         _color = hsv_to_rgb((float(buildings[building]['inuse']) / float(buildings[building]['total'])) * (1.0/3.0), 1.0, 1.0)
-        color = '#%02x%02x%02x' % (int(_color[0] * 255), int(_color[1] * 255), int(_color[2] * 255))
+        color = '%02x%02x%02x' % (int(_color[1] * 255), int(_color[0] * 255), int(_color[2] * 255))
         buildings[building]['color'] = color
     return buildings
 
