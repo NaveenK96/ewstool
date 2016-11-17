@@ -17,10 +17,7 @@ function initMap() {
         scrollwheel: false
     });
     Object.keys(buildings).map(function(building) {
-        var fillColors = ["00FF00", "33FF00", "66FF00", "99FF00", "CCFF00", "FFFF00", "FFCC00", "FF9900", "FF6600", "FF3300", "FF0000"];
-        var index = Math.ceil(((buildings[building].inuse / buildings[building].total) * fillColors.length) - 1);
-        index = index == -1 ? 0 : index;
-        var fillColor = fillColors[index];
+        var fillColor = buildings[building].color;
         var pinImage = new google.maps.MarkerImage("https://chart.apis.google.com/chart?chst=d_map_spin&chld=.8|0|" + fillColor + "|9|_|" + building);
         var marker = new google.maps.Marker({
             position: {lat: buildings[building].latitude, lng: buildings[building].longitude},

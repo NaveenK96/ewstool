@@ -49,8 +49,10 @@
                 {% endif %}
                 <div class="jumbotron" style="height:100%">
                     <h3>{{ lab }}</h3>
-                    <h4>In use
-                    <br><small>{{ buildings[name]['labs'][lab]['inuse']|string + ' / ' + buildings[name]['labs'][lab]['total']|string }}</small></h4>
+                    <h4>In use</h4>
+                    <div class="progress" style="width:880px;margin:auto;">
+                        <div class="progress-bar" role="progressbar" style="width: {{ (buildings[name]['labs'][lab]['inuse'] / buildings[name]['labs'][lab]['total']) * 100 }}%;background-color:{{ buildings[name]['labs'][lab]['color'] }};color:#000000">{{ buildings[name]['labs'][lab]['inuse']|string + ' / ' + buildings[name]['labs'][lab]['total']|string }}</div>
+                    </div>
                     <h4>Details
                         {% for detail in buildings[name]['labs'][lab]['details'] %}
                         <br><small>{{ detail }}</small>

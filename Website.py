@@ -5,6 +5,7 @@ from json import loads, dumps
 from datetime import datetime
 from Models import *
 from sqlite3 import connect
+from colorsys import hsv_to_rgb
 import pygal
 
 app = Flask(__name__)
@@ -91,6 +92,9 @@ def getData():
         buildings[building]['total'] += lab['machinecount']
         buildings[building]['labs'][lab_name]['total'] = lab['machinecount']
         buildings[building]['labs'][lab_name]['inuse'] = lab['inusecount']
+        _color = hsv_to_rgb((float(lab['inusecount']) / float(lab['machinecount'])) * (1.0/3.0), 1.0, 1.0)
+        color = '#%02x%02x%02x' % (int(_color[1] * 255), int(_color[0] * 255), int(_color[2] * 255))
+        buildings[building]['labs'][lab_name]['color'] = color
         with connect("Building.db") as con:
             cursor = con.cursor()
             cursor.execute("""SELECT `Lab_Details` FROM `Building` WHERE `LabName` = \"%s\"""" % (lab_name))
@@ -107,6 +111,11 @@ def getData():
             buildings[item[0]]['longitude'] = item[3]
             buildings[item[0]]['address'] = item[4]
             buildings[item[0]]['hours'] = item[5]
+
+    for building in buildings:
+        _color = hsv_to_rgb((float(buildings[building]['inuse']) / float(buildings[building]['total'])) * (1.0/3.0), 1.0, 1.0)
+        color = '#%02x%02x%02x' % (int(_color[0] * 255), int(_color[1] * 255), int(_color[2] * 255))
+        buildings[building]['color'] = color
     return buildings
 
 if __name__ == '__main__':
