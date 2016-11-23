@@ -36,7 +36,7 @@ function initMap() {
             infowindow.close(map, marker);
         });
         marker.addListener('click', function() {
-            window.location.replace(url + "/" + building);
+            window.location.assign(url + "/" + building);
         });
     });
     var controlDiv = document.createElement('div');
@@ -177,9 +177,9 @@ function handler_unfavorite() {
 function handler_panel() {
     var id = $(this).parent().parent().parent().attr('id').split("-");
     if (id.length == 2) {
-        id = id[1];
+        id = id[1].split('_').join(' ');
     } else {
-        id = id[0].replace('#', '');
+        id = id[0].replace('#', '').split('_').join(' ');
     }
     var pos;
     var keys = Object.keys(buildings);

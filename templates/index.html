@@ -39,7 +39,7 @@
                             </div>
                             {% for building in buildings %}
                                 {% for lab in buildings[building]['labs'] %}
-                                    <div class="panel-body" id="favorite-{{ lab }}" style="display:none">
+                                    <div class="panel-body" id="favorite-{{ lab.split(' ')|join('_') }}" style="display:none">
                                         <a>
                                             <div>
                                                 <div class="_panel">{{ building + " " + lab + ': ' + buildings[building]['labs'][lab]['inuse']|string + " / " + buildings[building]['labs'][lab]['total']|string + " in use" }}</div>
@@ -59,7 +59,7 @@
                                 </div>
                                 <div id="collapse{{ building }}" class="panel-collapse collapse out" role="tabpanel" >
                                 {% for lab in buildings[building]['labs'] %}
-                                    <div class="panel-body" id="{{ lab }}">
+                                    <div class="panel-body" id="{{ lab.split(' ')|join('_') }}">
                                         <a>
                                             <div>
                                                 <div class="_panel">{{ lab + ': ' + buildings[building]['labs'][lab]['inuse']|string + " / " + buildings[building]['labs'][lab]['total']|string + " in use" }}</div>
