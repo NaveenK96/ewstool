@@ -138,17 +138,17 @@ $(function () {
     if (typeof(Storage) !== "undefined") {
         var favorites = JSON.parse(localStorage.getItem("favorites"));
         if (favorites != null) {
-            if (favorites.length != 0) {
-                $(".panel.panel-info").show()
-            }
             for (var i = 0; i < favorites.length; i++) {
                 var name = "#favorite-" + favorites[i];
-                $(name).show();
-                name = "#" + favorites[i];
-                $(name).find("span").off("click");
-                $(name).find("span").removeClass("fa-star-o");
-                $(name).find("span").addClass("fa-star");
-                $(name).find("span").click(handler_unfavorite2);
+                if ($(name).length != 0) {
+                    $(".panel.panel-info").show();
+                    $(name).show();
+                    name = "#" + favorites[i];
+                    $(name).find("span").off("click");
+                    $(name).find("span").removeClass("fa-star-o");
+                    $(name).find("span").addClass("fa-star");
+                    $(name).find("span").click(handler_unfavorite2);
+                }
             }
         }
     }
