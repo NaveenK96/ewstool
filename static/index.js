@@ -134,7 +134,10 @@ $(function () {
                 var name = "#favorite-" + favorites[i];
                 $(name).show();
                 name = "#" + favorites[i];
-                $(name).hide();
+                $(name).find("span").off("click");
+                $(name).find("span").removeClass("fa-star-o");
+                $(name).find("span").addClass("fa-star");
+                $(name).find("span").click(handler_unfavorite2);
             }
         }
     }
@@ -151,8 +154,10 @@ function handler_favorite() {
         localStorage.setItem("favorites", JSON.stringify(favorites));
         var name = "#favorite-" + id;
         $(name).show();
-        name = "#" + id;
-        $(name).hide();
+        $(this).off("click");
+        $(this).removeClass("fa-star-o");
+        $(this).addClass("fa-star");
+        $(this).click(handler_unfavorite2);
     }
 }
 function handler_unfavorite() {
@@ -170,10 +175,33 @@ function handler_unfavorite() {
         var name = "#favorite-" + id;
         $(name).hide();
         name = "#" + id;
-        $(name).show();
+        $(name).find("span").off("click");
+        $(name).find("span").removeClass("fa-star");
+        $(name).find("span").addClass("fa-star-o");
+        $(name).find("span").click(handler_favorite);
     }
 }
-
+function handler_unfavorite2() {
+    if (typeof(Storage) !== "undefined") {
+        var id = $(this).parent().parent().parent().attr('id');
+        var favorites = JSON.parse(localStorage.getItem("favorites"));
+        var index = favorites.indexOf(id);
+        if (index > -1) {
+            favorites.splice(index, 1);
+        }
+        localStorage.setItem("favorites", JSON.stringify(favorites));
+        if (favorites.length == 0) {
+            $(".panel.panel-info").hide()
+        }
+        var name = "#favorite-" + id;
+        $(name).hide();
+        name = "#" + id;
+        $(name).find("span").off("click");
+        $(name).find("span").removeClass("fa-star");
+        $(name).find("span").addClass("fa-star-o");
+        $(name).find("span").click(handler_favorite);
+    }
+}
 function handler_panel() {
     var id = $(this).parent().parent().parent().attr('id').split("-");
     if (id.length == 2) {
