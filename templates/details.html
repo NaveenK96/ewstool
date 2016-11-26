@@ -28,9 +28,9 @@
                     <ul class="nav navbar-nav navbar-right">
                         {% for lab in buildings[name]['labs'] %}
                             {% if loop.index == 1%}
-                            <li class="active" id="button-{{ lab }}"><a>{{ lab }}</a></li>
+                            <li class="active" id="button-{{ lab.split(' ')|join('_') }}"><a>{{ lab }}</a></li>
                             {% else %}
-                            <li class="off" id="button-{{ lab }}"><a>{{ lab }}</a></li>
+                            <li class="off" id="button-{{ lab.split(' ')|join('_') }}"><a>{{ lab }}</a></li>
                             {% endif %}
                         {% endfor %}
                     </ul>
@@ -43,9 +43,9 @@
             </div>
             {% for lab in buildings[name]['labs']%}
                 {% if loop.index == 1 %}
-                    <div id="detail-{{ lab }}">
+                    <div id="detail-{{ lab.split(' ')|join('_') }}">
                 {% else %}
-                    <div id="detail-{{ lab }}" style="display:none">
+                    <div id="detail-{{ lab.split(' ')|join('_') }}" style="display:none">
                 {% endif %}
                 <div class="jumbotron row" style="margin-top:100px">
                     <div class="col-md-6">

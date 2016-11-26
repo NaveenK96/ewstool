@@ -21,8 +21,26 @@
                 <div class="collapse navbar-collapse" id="collapse-1">
                     <ul class="nav navbar-nav navbar-left">
                         <button class="btn btn-primary" id="toggle-button" type="button" style="position:relative;top:8px">
-                            <span class="fa fa-align-justify" title="EWS Labs" aria-hidden="true"> EWS Labs</span>
+                            <span class="fa fa-align-justify" title="EWS Labs" aria-hidden="true"></span> EWS Labs
                         </button>
+                        {% if home_url %}
+                        <a href="{{ home_url|safe }}">
+                            <button class="btn btn-default"type="button" style="position:relative;top:8px">
+                                <span class="fa fa-home" title="EWS Labs" aria-hidden="true"></span> Home
+                            </button>
+                        </a>
+                        {% endif %}
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                        <form class="form-inline" style="position:relative;top:8px;right:10px" action="{{ search_url|safe }}" method="post">
+                            <div class="form-group">
+                                <label class="sr-only" for="searching">Search</label>
+                                <input type="text" class="form-control" id="search" name="search" placeholder="Search...">
+                            </div>
+                            <button class="btn btn-default" type="submit">
+                                <span class="fa fa-search" title="Search" aria-hidden="true"></span> Search
+                            </button>
+                        </form>
                     </ul>
                 </div>
             </div>

@@ -124,6 +124,17 @@ $(function () {
             alert("Geolocation not supported.");
         }
     });
+    $( "#search" ).autocomplete({
+        source: function(request, response) {
+            $.getJSON(url + "/_search", {
+            search: request.term
+            }, response);
+        },
+        minLength: 4,
+        classes: {
+            "ui-autocomplete": "highlight"
+        }
+    });
     if (typeof(Storage) !== "undefined") {
         var favorites = JSON.parse(localStorage.getItem("favorites"));
         if (favorites != null) {

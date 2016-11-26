@@ -1,5 +1,5 @@
-from flask import Flask, request, render_template, url_for, jsonify
-from collections import OrderedDict
+from flask import Flask, request, render_template, url_for, jsonify, redirect
+from collections import OrderedDict, defaultdict
 from urllib2 import urlopen
 from json import loads, dumps
 from datetime import datetime
@@ -16,7 +16,8 @@ def inject_static():
     js_urls = [url_for('static', filename='jquery-3.1.1.min.js'), url_for('static', filename='tether.min.js'), url_for('static', filename='bootstrap.min.js')]
     return dict(css_urls=css_urls,
                 js_urls=js_urls,
-                title="the bourne interface")
+                title="the bourne interface",
+                home_url=False)
 
 @app.route('/<name>', methods=['GET'])
 def prediction(name = None):
@@ -58,15 +59,61 @@ def prediction(name = None):
                             css_urls=css_urls,
                             js_urls=js_urls)
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/', methods=['GET'])
 def index():
-    css_urls = [url_for('static', filename='font-awesome-4.7.0/css/font-awesome.min.css'), url_for('static', filename='bootstrap.min.css'),  url_for('static', filename='index.css')]
-    js_urls = [url_for('static', filename='jquery-3.1.1.min.js'), url_for('static', filename='tether.min.js'), url_for('static', filename='bootstrap.min.js'), url_for('static', filename='index.js')]
+    css_urls = [url_for('static', filename='font-awesome-4.7.0/css/font-awesome.min.css'), url_for('static', filename='bootstrap.min.css'),  url_for('static', filename='index.css'), url_for('static', filename='jquery-ui.min.css')]
+    js_urls = [url_for('static', filename='jquery-3.1.1.min.js'), url_for('static', filename='tether.min.js'), url_for('static', filename='bootstrap.min.js'), url_for('static', filename='index.js'), url_for('static', filename='jquery-ui.min.js')]
 
     return render_template('index.html',
                             buildings=getData(),
                             css_urls=css_urls,
-                            js_urls=js_urls)
+                            js_urls=js_urls,
+                            search_url=url_for('_search'))
+
+@app.route('/_search', methods=['GET', 'POST'])
+def _search():
+    if request.method == 'POST':
+        query = str(request.form['search']).split(" ", 1)
+        building = query[0]
+        data = getData()
+        if building in data:
+                return redirect(url_for('prediction', name=building))
+        return redirect(url_for('search', query=str(request.form['search'])))
+    query = str(request.args['search'])
+    with connect("Building.db") as con:
+        cursor = con.cursor()
+        cursor.execute("""SELECT `BuildingName`, `LabName` FROM `Building` WHERE `Lab_Details` LIKE '%{0}%'""".format(query))
+        autocomp = [str(x[0]) + " " + str(x[1]) for x in cursor.fetchall()]
+    return jsonify(autocomp);
+
+@app.route('/search/<query>', methods=['GET'])
+def search(query):
+    css_urls = [url_for('static', filename='font-awesome-4.7.0/css/font-awesome.min.css'), url_for('static', filename='bootstrap.min.css'),  url_for('static', filename='index.css'), url_for('static', filename='jquery-ui.min.css')]
+    js_urls = [url_for('static', filename='jquery-3.1.1.min.js'), url_for('static', filename='tether.min.js'), url_for('static', filename='bootstrap.min.js'), url_for('static', filename='index.js'), url_for('static', filename='jquery-ui.min.js')]
+
+    labs = list()
+    with connect("Building.db") as con:
+        cursor = con.cursor()
+        cursor.execute("""SELECT `LabName` FROM `Building` WHERE `Lab_Details` LIKE '%{0}%'""".format(query))
+        labs = [str(x[0]) for x in cursor.fetchall()]
+    data = getData()
+    not_used = defaultdict(list)
+    for building in data:
+        for lab in data[building]['labs']:
+            if lab not in labs:
+                not_used[building].append(lab)
+    for building in not_used:
+        for lab in not_used[building]:
+            del data[building]['labs'][lab]
+        if not data[building]['labs']:
+            del data[building]
+
+    return render_template('index.html',
+                            home_url=url_for('index'),
+                            buildings=data,
+                            css_urls=css_urls,
+                            js_urls=js_urls,
+                            search_url=url_for('_search'))
 
 def getData():
     _buildings = loads(urlopen('https://my.engr.illinois.edu/labtrack/util_data_json.asp').read())['data']
@@ -77,7 +124,7 @@ def getData():
         del lab_name[0]
         lab_name = " ".join(lab_name)
         if lab_name == '':
-            lab_name = 'Default'
+            lab_name = 'default'
         if building not in buildings:
             buildings[building] = dict()
         if 'labs' not in buildings[building]:
