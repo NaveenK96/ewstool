@@ -1,4 +1,5 @@
 var map;
+var markers = {};
 var url;
 var buildings;
 
@@ -17,27 +18,7 @@ function initMap() {
         scrollwheel: false
     });
     Object.keys(buildings).map(function(building) {
-        var fillColor = buildings[building].color;
-        var pinImage = new google.maps.MarkerImage("https://chart.apis.google.com/chart?chst=d_map_spin&chld=.8|0|" + fillColor + "|9|_|" + building);
-        var marker = new google.maps.Marker({
-            position: {lat: buildings[building].latitude, lng: buildings[building].longitude},
-            map: map,
-            title: buildings[building].long_name,
-            icon: pinImage
-        });
-        var contentString = '<div class="text-center"><h4>' + buildings[building].long_name + '<br><small>' + buildings[building].address +  '</small></h4><p></p>' + buildings[building].hours + '<h5>In use: <small>' + buildings[building].inuse.toString() + ' / ' + buildings[building].total.toString() + '</small></h5></div>';
-        var infowindow = new google.maps.InfoWindow({
-            content: contentString
-        });
-        marker.addListener('mouseover', function() {
-            infowindow.open(map, marker);
-        });
-        marker.addListener('mouseout', function() {
-            infowindow.close(map, marker);
-        });
-        marker.addListener('click', function() {
-            window.location.assign(url + "/" + building);
-        });
+        addMarker(building);
     });
     var controlDiv = document.createElement('div');
     var controlUI = document.createElement('div');
@@ -71,10 +52,44 @@ function initMap() {
     }
 }
 
+function addMarker(building) {
+    var fillColor = buildings[building].color;
+    var pinImage = new google.maps.MarkerImage("https://chart.apis.google.com/chart?chst=d_map_spin&chld=.8|0|" + fillColor + "|9|_|" + building);
+    var marker = new google.maps.Marker({
+        position: {lat: buildings[building].latitude, lng: buildings[building].longitude},
+        map: map,
+        title: buildings[building].long_name,
+        icon: pinImage
+    });
+    var contentString = '<div class="text-center"><h4>' + buildings[building].long_name + '<br><small>' + buildings[building].address +  '</small></h4><p></p>' + buildings[building].hours + '<h5>In use: <small>' + buildings[building].inuse.toString() + ' / ' + buildings[building].total.toString() + '</small></h5></div>';
+    var infowindow = new google.maps.InfoWindow({
+        content: contentString
+    });
+    marker.addListener('mouseover', function() {
+        infowindow.open(map, marker);
+    });
+    marker.addListener('mouseout', function() {
+        infowindow.close(map, marker);
+    });
+    marker.addListener('click', function() {
+        window.location.assign(url + "/" + building);
+    });
+    markers[building] = marker;
+}
+
 $(function () {
     $('.fa.fa-star-o').click(handler_favorite);
     $('.fa.fa-star').click(handler_unfavorite);
     $('._panel').click(handler_panel);
+    $('._check').click(function () {
+        var id = $(this).attr('id').split("-")[1];
+        // just unchecked
+        if (!this.checked) {
+            markers[id].setMap(null);
+        } else {
+            markers[id].setMap(map);
+        }
+    });
 
     var $menu = $('#sidebar-wrapper');
     var $content = $('#main-wrapper');

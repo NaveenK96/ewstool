@@ -25,7 +25,7 @@
                         </button>
                         {% if home_url %}
                         <a href="{{ home_url|safe }}">
-                            <button class="btn btn-default"type="button" style="position:relative;top:8px">
+                            <button class="btn btn-default" type="button" style="position:relative;top:8px">
                                 <span class="fa fa-home" title="EWS Labs" aria-hidden="true"></span> Home
                             </button>
                         </a>
@@ -76,6 +76,10 @@
                                     </h4>
                                 </div>
                                 <div id="collapse{{ building }}" class="panel-collapse collapse out" role="tabpanel" >
+                                    <div class="panel-body">
+                                        Toggle Map Marker
+                                        <input type="checkbox" checked="checked" class="_check pull-right" id="marker-{{ building }}">
+                                    </div>
                                 {% for lab in buildings[building]['labs'] %}
                                     <div class="panel-body" id="{{ lab.split(' ')|join('_') }}">
                                         <a>
