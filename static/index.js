@@ -80,7 +80,7 @@ function addMarker(building) {
 $(function () {
     $('.fa.fa-star-o').click(handler_favorite);
     $('.fa.fa-star').click(handler_unfavorite);
-    $('._panel').click(handler_panel);
+    $('.centmap').click(handlercentmap);
     $('._check').click(function () {
         var id = $(this).attr('id').split("-")[1];
         // just unchecked
@@ -171,7 +171,7 @@ $(function () {
 function handler_favorite() {
     if (typeof(Storage) !== "undefined") {
         $(".panel.panel-info").show()
-        var id = $(this).parent().parent().parent().attr('id');
+        var id = $(this).parent().parent().attr('id');
         var favorites = JSON.parse(localStorage.getItem("favorites"));
         if (favorites == null) {
             favorites = [];
@@ -188,7 +188,7 @@ function handler_favorite() {
 }
 function handler_unfavorite() {
     if (typeof(Storage) !== "undefined") {
-        var id = $(this).parent().parent().parent().attr('id').split('-')[1];
+        var id = $(this).parent().parent().attr('id').split('-')[1];
         var favorites = JSON.parse(localStorage.getItem("favorites"));
         var index = favorites.indexOf(id);
         if (index > -1) {
@@ -209,7 +209,7 @@ function handler_unfavorite() {
 }
 function handler_unfavorite2() {
     if (typeof(Storage) !== "undefined") {
-        var id = $(this).parent().parent().parent().attr('id');
+        var id = $(this).parent().parent().attr('id');
         var favorites = JSON.parse(localStorage.getItem("favorites"));
         var index = favorites.indexOf(id);
         if (index > -1) {
@@ -228,19 +228,8 @@ function handler_unfavorite2() {
         $(name).find("span").click(handler_favorite);
     }
 }
-function handler_panel() {
-    var id = $(this).parent().parent().parent().attr('id').split("-");
-    if (id.length == 2) {
-        id = id[1].split('_').join(' ');
-    } else {
-        id = id[0].replace('#', '').split('_').join(' ');
-    }
-    var pos;
-    var keys = Object.keys(buildings);
-    for (var i = 0; i < keys.length; i++) {
-        if (id in buildings[keys[i]].labs) {
-            pos = {'lat': buildings[keys[i]].latitude, 'lng': buildings[keys[i]].longitude};
-        }
-    }
+function handlercentmap() {
+    var id = $(this).parent().parent().attr('id').replace('collapse', '');
+    var pos = {'lat': buildings[id].latitude, 'lng': buildings[id].longitude};
     map.setCenter(pos)
 }

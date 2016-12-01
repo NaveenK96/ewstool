@@ -58,12 +58,7 @@
                             {% for building in buildings %}
                                 {% for lab in buildings[building]['labs'] %}
                                     <div class="panel-body" id="favorite-{{ lab.split(' ')|join('_') }}" style="display:none">
-                                        <a>
-                                            <div>
-                                                <div class="_panel">{{ building + " " + lab + ': ' + buildings[building]['labs'][lab]['inuse']|string + " / " + buildings[building]['labs'][lab]['total']|string + " in use" }}</div>
-                                                <span class="fa fa-star pull-right" title="Unfavorite"></span>
-                                            </div>
-                                        </a>
+                                        <div>{{ building + " " + lab + ': ' + buildings[building]['labs'][lab]['inuse']|string + " / " + buildings[building]['labs'][lab]['total']|string + " in use" }}<span class="fa fa-star pull-right" title="Unfavorite" style="position:relative;top:5px;"></span></div>
                                     </div>
                                 {% endfor %}
                             {% endfor %}
@@ -76,18 +71,13 @@
                                     </h4>
                                 </div>
                                 <div id="collapse{{ building }}" class="panel-collapse collapse out" role="tabpanel" >
-                                    <div class="panel-body">
-                                        Toggle Map Marker
+                                    <div class="panel-body" style="padding-top:2%;padding-bottom:2%">
+                                        <a class="centmap">Toggle Map Marker</a>
                                         <input type="checkbox" checked="checked" class="_check pull-right" id="marker-{{ building }}">
                                     </div>
                                 {% for lab in buildings[building]['labs'] %}
                                     <div class="panel-body" id="{{ lab.split(' ')|join('_') }}">
-                                        <a>
-                                            <div>
-                                                <div class="_panel">{{ lab + ': ' + buildings[building]['labs'][lab]['inuse']|string + " / " + buildings[building]['labs'][lab]['total']|string + " in use" }}</div>
-                                                <span class="fa fa-star-o pull-right" title="Favorite"></span>
-                                            </div>
-                                        </a>
+                                        <div>{{ lab + ': ' + buildings[building]['labs'][lab]['inuse']|string + " / " + buildings[building]['labs'][lab]['total']|string + " in use" }}<span class="fa fa-star-o pull-right" title="Favorite" style="position:relative;top:5px"></span></div>
                                     </div>
                                 {% endfor %}
                                 </div>
