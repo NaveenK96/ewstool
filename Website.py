@@ -30,9 +30,10 @@ def prediction(name = None):
     # charts = dict()
     for lab in labs:
         lab = str(lab[0])
+        total = int(get_total_from_lab(lab)[0][0])
         lab_details = get_lab_details(lab)
         data = get_historical_data(lab)
-        bar_chart = pygal.Bar(width=1100, height=600, range=(0, 70))
+        bar_chart = pygal.Bar(width=1100, height=600, range=(0, total))
         bar_chart.title = "Next 24 hour prediction for " + lab
         bar_chart.add('Usage', data)
         xlabels = []

@@ -26,6 +26,13 @@ def get_labs_from_building(building_name):
         con.commit()
         return result.fetchall()
 
+def get_total_from_lab(lab_name):
+    with sql.connect(database) as con:
+        cur = con.cursor()
+        result = cur.execute("SELECT Total FROM Labs WHERE LabName = (?);", (lab_name,))
+        con.commit()
+        return result.fetchall()
+
 def insert_data():
     response = urllib2.urlopen('https://my.engr.illinois.edu/labtrack/util_data_json.asp')
     data = response.read()
@@ -47,11 +54,14 @@ def insert_data():
         con.commit()
 
 def get_historical_data(lab_name):
+    print('\n\n\nlab_name = ' + lab_name)
     total = 0
     num = 0
     average = [-1] * 24
 
     for j in range(0, 24):
+        num = 0
+        total = 0
         for i in range(0, 4):
             d = datetime.today() + timedelta(hours=j) - timedelta(days=7*(i+1))
             with sql.connect(database) as con:
@@ -59,15 +69,20 @@ def get_historical_data(lab_name):
                 result = cur.execute("SELECT InUse FROM Labs WHERE LabName = (?) AND Year = (?) AND Month = (?) AND Day = (?) AND Hour = (?);", (lab_name, d.year, d.month, d.day, d.hour,))
                 con.commit()
             result = result.fetchall()
-            if (len(result) > 0):
-                total += result[0][0]
+            if len(result) > 0:
+                if j == 21:
+                    print('j = ' + str(j) +', usage = ' + str(result[0][0]))
+                total += result[0][0] 
                 num += 1
 
         if num > 0:
             average[j] = total / num
+            if j == 21:
+                print 'total = ' + str(total)
+                print 'num = ' + str(num)
+                print 'average = ' + str(average[j])
+                print ''
         # else:
             # print('No historical data available')
 
     return average
-
-# get_historical_data('4th Floor Center')
