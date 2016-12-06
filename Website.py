@@ -167,5 +167,4 @@ def getData():
     return buildings
 
 if __name__ == '__main__':
-    # app.run()
-    app.run(debug=True, ssl_context=('server.crt', 'server.key'))
+    app.run(ssl_context=('server.crt', 'server.key'))
